@@ -58,6 +58,13 @@ By working through these practicals, students should be able to:
 
 Implement a search algorithm and test it on **20 fixed mazes**. Compare the length of the path it returns with the true shortest path, and examine how much search effort was needed to find it.
 
+
+### Screenshots
+
+![Blind Search Example 1](https://github.com/user-attachments/assets/093060ce-07cb-4308-a446-28b3df49a10a)
+
+![Blind Search Example 2](https://github.com/user-attachments/assets/c9f158a1-560d-4137-b1ed-eed11a9b8369)
+
 ### Start
 
 Open a terminal in the folder containing `run.py`:
@@ -149,6 +156,12 @@ python engine.py --seed 2027
 5. Explain why obstacle density alone does not determine search difficulty.
 
 ## 2. A* Search
+
+### Screenshots
+
+![A Star Example 1](https://github.com/user-attachments/assets/bbb35147-5a15-4030-89d2-711ca15cab8f)
+
+![A Star Example 2](https://github.com/user-attachments/assets/84572ea4-6b7d-4d02-b02b-bb2915a9cbda)
 
 Run the same 20 mazes with the supplied A* example:
 
