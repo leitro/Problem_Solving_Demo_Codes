@@ -13,7 +13,7 @@ The practical series begins with blind search and will expand to heuristic searc
 | Part | Topic | Main algorithms and concepts | Status |
 | --- | --- | --- | --- |
 | 1 | Blind Search: 20 Maze Challenge | Breadth-first search, depth-first search, path reconstruction, search effort | Documented below |
-| 2 | A* Search | Heuristics, path cost, priority queues, informed search | Planned; implementation and launch details to follow |
+| 2 | A* Search | Heuristics, path cost, priority queues, informed search | Ready; documented below |
 | 3 | Game Search | Minimax, evaluation functions, depth limits, alpha–beta pruning | Planned; implementation and launch details to follow |
 
 ## Learning goals
@@ -150,3 +150,18 @@ python engine.py --seed 2027
 
 ## 2. A* Search
 
+Run the same 20 mazes with the supplied A* example:
+
+```bash
+cd 2.A-star/
+python run.py
+```
+
+Edit `algorithm.py` to experiment. Its `solve(grid, start, goal)` function returns `(path, expanded, exploration)`, just like Part 1. The example uses Manhattan distance as the heuristic and orders the frontier by `f = g + h`, where `g` is the number of moves so far. `engine.py`, `run.py`, and `mazes.json` use the same scoring and grids as Part 1, so compare the two folders' `algorithm_score.txt` reports for path lengths, expanded nodes, and search time. 
+
+### Suggested practical: 
+
+1. Understand the implementation **A\*** using a priority queue ordered by `f(n) = g(n) + h(n)`, where `g(n)` is the path cost so far and `h(n)` estimates the remaining cost to the goal.
+2. Run A\* on the same mazes as BFS and DFS. Compare path lengths and expansions using an admissible heuristic, such as Manhattan distance for four-directional movement.
+3. Explain why A\* returns a shortest path when its heuristic is admissible and the implementation handles repeated states correctly. Explain how the heuristic can reduce search compared with BFS.
+4. Compare A\* with different heuristics, including `h(n) = 0`, which makes it equivalent to uniform-cost search. Explain why obstacle density alone does not determine search difficulty: maze layout, start and goal positions, and heuristic accuracy also matter.
