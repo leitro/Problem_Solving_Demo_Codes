@@ -29,7 +29,7 @@ By working through these practicals, students should be able to:
 
 ## Requirements
 
-- **Python 3.10 or later**, and required packages in requirements.txt. 
+- **Python 3.10, 3.11, or 3.12**, and required packages in requirements.txt. 
 
   ```bash
   python -m pip install -r requirements.txt
