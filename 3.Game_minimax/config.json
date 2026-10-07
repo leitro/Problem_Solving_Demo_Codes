@@ -1,0 +1,8 @@
+{
+  "mode": "human_vs_ai",
+  "human_color": "black",
+  "white_algorithm": "algorithm_1.py",
+  "black_algorithm": "algorithm_2.py",
+  "search_depth": 2,
+  "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+}

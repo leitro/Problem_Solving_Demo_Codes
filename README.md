@@ -14,7 +14,8 @@ The practical series begins with blind search and will expand to heuristic searc
 | --- | --- | --- | --- |
 | 1 | Blind Search: 20 Maze Challenge | Breadth-first search, depth-first search, path reconstruction, search effort | Documented below |
 | 2 | A* Search | Heuristics, path cost, priority queues, informed search | Ready; documented below |
-| 3 | Game Search | Minimax, evaluation functions, depth limits, alpha–beta pruning | Planned; implementation and launch details to follow |
+| 3 | Game Search: Chess Minimax | Minimax, evaluation functions, depth limits | Documented below |
+| 4 | Game Search: Chess Alpha–Beta | Alpha–beta pruning, search efficiency | Planned |
 
 ## Learning goals
 
@@ -178,3 +179,165 @@ Edit `algorithm.py` to experiment. Its `solve(grid, start, goal)` function retur
 2. Run A\* on the same mazes as BFS and DFS. Compare path lengths and expansions using an admissible heuristic, such as Manhattan distance for four-directional movement.
 3. Explain why A\* returns a shortest path when its heuristic is admissible and the implementation handles repeated states correctly. Explain how the heuristic can reduce search compared with BFS.
 4. Compare A\* with different heuristics, including `h(n) = 0`, which makes it equivalent to uniform-cost search. Explain why obstacle density alone does not determine search difficulty: maze layout, start and goal positions, and heuristic accuracy also matter.
+
+
+## 3. Game Search: Chess Minimax
+
+Implement **minimax in `algorithm_2.py`**, then compare your AI with the supplied
+baseline in `algorithm_1.py`. The framework handles legal moves, chess rules, and
+the Pygame display so you can focus on search and evaluation.
+
+All settings are in `config.json`.
+
+### Screenshots
+
+![Game Example](https://github.com/user-attachments/assets/f7c0aee7-a3b8-4809-a97b-ff6c32bd1108)
+
+### Start
+
+Open a terminal in `3.Game_Minimax/chess_minimax/`, the folder containing `main.py`:
+
+```bash
+python -m pip install -r requirements.txt
+python main.py
+```
+
+Python 3.10, 3.11, or 3.12 and a graphical desktop are required (tested with Ubuntu 26.04).
+
+The current configuration runs **algorithm_1 as White against a human as Black**
+at **depth 2**. Click a piece, then a highlighted destination. The board faces the
+human; AI versus AI displays White at the bottom.
+
+### Key files
+
+| File | Purpose |
+| --- | --- |
+| `config.json` | Game mode, player colors, algorithm files, depth, and starting position. |
+| `algorithm_1.py` | Complete reference implementation: basic minimax with material evaluation. |
+| `algorithm_2.py` | Student workspace: a blank `choose_move` function with guideline comments. |
+| `main.py` | Game platform: rules, input, display, AI execution, and returned-move validation. |
+| `assets/` | Local SVG images for the six piece types in both colors. |
+| `requirements.txt` | Python dependencies. |
+
+### Configure the game
+
+Edit `config.json`, save it, and **restart `python main.py`** to apply changes.
+Restart the application after editing an algorithm too. The R key restarts the
+position within the current configuration, which does not reload files.
+
+The current configuration is:
+
+```json
+{
+  "mode": "human_vs_ai",
+  "human_color": "black",
+  "white_algorithm": "algorithm_1.py",
+  "black_algorithm": "algorithm_2.py",
+  "search_depth": 2,
+  "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+}
+```
+
+Keep all six keys. JSON uses double quotes and does not allow comments or a comma
+after the last entry. Put `search_depth` as a number, not a quoted string.
+
+| Setting | Possible values | Behaviour |
+| --- | --- | --- |
+| `mode` | `"human_vs_ai"`, `"ai_vs_ai"` | One human and one AI, or two AIs taking turns automatically. |
+| `human_color` | `"white"`, `"black"` | Human's side in human versus AI. Still supply a valid value in AI versus AI, where it is ignored. |
+| `white_algorithm` | `"algorithm_1.py"`, `"algorithm_2.py"`, or another existing `.py` file with the required interface | AI file assigned to White; ignored when White is human. |
+| `black_algorithm` | `"algorithm_1.py"`, `"algorithm_2.py"`, or another existing `.py` file with the required interface | AI file assigned to Black; ignored when Black is human. |
+| `search_depth` | Any positive integer: `1`, `2`, `3`, … | Number of plies passed to the active AI; the same configured depth is passed to both AIs. |
+| `initial_fen` | A valid chess position in FEN notation | Starting position, side to move, castling rights, en passant target, and move counters. |
+
+Algorithm filenames are resolved relative to the folder containing `main.py`.
+Only files for AI-controlled sides are loaded. Both sides may use the same file.
+
+To switch players, edit the following fields and keep the other settings:
+
+| Match | `mode` | `human_color` | `white_algorithm` | `black_algorithm` |
+| --- | --- | --- | --- | --- |
+| Human Black versus baseline White | `human_vs_ai` | `black` | `algorithm_1.py` | `algorithm_2.py` |
+| Human White versus baseline Black | `human_vs_ai` | `white` | `algorithm_2.py` | `algorithm_1.py` |
+| Student Black versus baseline White | `ai_vs_ai` | `black` (ignored) | `algorithm_1.py` | `algorithm_2.py` |
+| Student White versus baseline Black | `ai_vs_ai` | `black` (ignored) | `algorithm_2.py` | `algorithm_1.py` |
+
+**Complete `algorithm_2.py` before assigning it to an AI player.** Its initial
+`return None` is a placeholder. 
+
+Depth counts individual player moves, called **plies**. Depth 1 evaluates after
+your candidate move; depth 2 includes the opponent's reply; depth 3 also includes
+your next move. The application always passes the configured value explicitly,
+so the `depth=10` default in the function signature does not override the current
+`search_depth: 2` setting.
+
+Start with depth 1 or 2 and increase gradually. The reference AI explores every
+legal branch without pruning, caching, or a time limit. **Depth 10 is
+impractically slow from the starting position.** The window remains responsive
+while searching and can be resized or closed.
+
+### Required algorithm interface
+
+Keep the supplied function name and arguments:
+
+```python
+def choose_move(board: chess.Board, depth: int = 10):
+    return None
+```
+
+Replace the placeholder with your minimax implementation. You may add helper
+functions, evaluation weights, or other algorithm parameters in `algorithm_2.py`.
+
+- Return a legal `chess.Move` from `board.legal_moves` when play can continue.
+- Return `None` only when the game is finished.
+- Leave the supplied board and its move history unchanged. Match every
+  `board.push(move)` with `board.pop()`, including when an error occurs.
+- Respect the supplied `depth` when deciding when to stop searching.
+
+The platform passes a private board copy with history and validates the returned
+move. An exception prints a traceback in the terminal and pauses the game; an
+illegal move or `None` in an ongoing game also pauses it. Fix the algorithm and
+restart the application.
+
+### Task: implement, compete, and experiment
+
+1. **Understand the baseline.** Read `algorithm_1.py` and identify move selection,
+   the recursive search, terminal scoring, and material evaluation. Explain why
+   White maximizes and Black minimizes when positive scores favor White.
+2. **Implement minimax in `algorithm_2.py`.** Write your own recursive search and
+   evaluation function. Score finished games before applying the depth limit.
+   Treat White wins, Black wins, and draws correctly; otherwise evaluate material
+   at the depth limit. Restore the board after every explored move.
+3. **Activate AI versus AI.** Set `mode` to `"ai_vs_ai"`, `white_algorithm` to
+   `"algorithm_1.py"`, and `black_algorithm` to `"algorithm_2.py"`. Set
+   `search_depth` to 1 or 2, save, and relaunch. Both AIs now play automatically.
+4. **Compare both colors.** Repeat the same experiment after swapping the two
+   algorithm filenames. Keep the starting position and configured depth identical.
+   Record the game result and search time; a single win is not enough to establish
+   that one algorithm is consistently stronger.
+5. **Explore parameters.** Change one factor at a time: depth, piece values,
+   positional bonuses, or how equally scored moves are selected. Compare material
+   alone with additions such as central control, pawn advancement, development,
+   or king safety. Keep evaluation values small relative to the checkmate score.
+6. **Explain your results.** Discuss the relationship between depth, decision
+   quality, and runtime. Identify a position where your evaluation helps and one
+   where it fails. Explain whether improvements come from deeper search, better
+   evaluation, or both.
+
+### Game controls
+
+| Control | Action |
+| --- | --- |
+| Click a piece, then a destination | Make a legal human move. |
+| R | Restart the configured starting position after the active search completes. |
+| U | Undo to the human's turn, or undo one move in AI versus AI, when no search is active. |
+| D | Claim an available draw on the human's turn. |
+| Escape | Cancel promotion or selection; otherwise exit. |
+| Window close | Exit, including during AI search. |
+
+
+Credit: piece images are the standard chess SVG pieces provided by python-chess,
+originally designed by Colin M. L. Burnett.
+
+## 4. Game Search: Chess Alpha–Beta
+
