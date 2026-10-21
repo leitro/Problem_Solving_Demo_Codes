@@ -1,0 +1,34 @@
+{
+  "mode": "ai_vs_ai",
+  "human_color": "white",
+  "white_algorithm": "algorithm_alpha-beta.py",
+  "black_algorithm": "algorithm_bot.py",
+  "search_depth": 2,
+  "move_delay_seconds": 0.2,
+  "rules": {
+    "profile": "fide_standard",
+    "auto_claim_draws_for_ai": true,
+    "automatic_draws": {
+      "stalemate": "Stalemate",
+      "insufficient_material": "Insufficient mating material",
+      "fivefold_repetition": "Fivefold repetition",
+      "seventyfive_moves": "75-move rule"
+    },
+    "claimable_draws": {
+      "threefold_repetition": "Threefold repetition",
+      "fifty_moves": "50-move rule"
+    },
+    "reference_url": "https://handbook.fide.com/chapter/E012023",
+    "implementation_reference_url": "https://python-chess.readthedocs.io/en/latest/core.html",
+    "rule_notes": {
+      "stalemate": "Automatic draw when the player to move has no legal move and is not in check (FIDE 5.2.1).",
+      "insufficient_material": "Automatic material-based dead-position detection: K vs K, K+B vs K, K+N vs K, and only kings/bishops with every bishop on the same square color (FIDE 5.2.2).",
+      "bishops": "Only bishops remaining is not sufficient: bishops on both square colors can allow checkmate.",
+      "repetition": "Three occurrences allow a claim; five occurrences end the game automatically (FIDE 9.2 and 9.6.1). Position identity includes side to move and legal-move rights.",
+      "move_count": "50 moves by each player without a pawn move or capture allow a claim (100 plies); 75 by each end automatically (150 plies). Checkmate takes precedence (FIDE 9.3 and 9.6.2).",
+      "claims": "A claim may identify an intended legal move that completes the condition. AI claims are optional player policy; humans press D.",
+      "limitation": "python-chess material detection does not prove every possible dead position, such as some blocked positions. This is not a complete FIDE tournament arbiter."
+    }
+  },
+  "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+}
